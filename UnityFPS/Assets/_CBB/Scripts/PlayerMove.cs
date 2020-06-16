@@ -11,9 +11,16 @@ public class PlayerMove : MonoBehaviour
     private float v;
     
     public float speed = 5.0f;//이동하는 속도
-
     private CharacterController controller; //캐릭터 컨트롤러
 
+    
+
+    //중력 적용
+    public float gravity = -20;
+    float velocityY;        //낙하속도(벨로시티는 방향과 힘을 들고 있다)
+
+    float jumpPower = 10.0f;    //점프 파워
+    int jumpCount = 0;  //점프 카운트 ==> 2단점프까지만.
 
     private void Start()
     {
@@ -45,7 +52,49 @@ public class PlayerMove : MonoBehaviour
         //transform.Translate(dir * speed * Time.deltaTime);
         //문제점 : 하늘, 땅 충돌처리 안 됨
 
+        //controller.Move(dir * speed * Time.deltaTime);
+        //땅 뚫지 못하고, 충돌처리는 되었으나 하늘은 아직 날수있음 => 중력값 조정 필요
+        
+        //캐릭터 점프
+        //점프 버튼을 누르면 수직 속도에 점프파워를 넣는다
+        //땅에 닿으면 velocityY값을 0으로 초기화
+       //if(controller.isGrounded)   //땅에 닿았는지 확인   //점프 씹힌다.
+       //{     
+       //}
+
+        //CollisionFlags.Above;(위쪽) 
+        //CollisionFlags.Below;(아래) 
+        //CollisionFlags.Sides;(옆)
+        if (controller.collisionFlags == CollisionFlags.Below)
+        {
+            velocityY = 0;
+            jumpCount = 0;
+        }
+        else
+        {
+            //중력 적용하기
+            velocityY += gravity * Time.deltaTime;
+            dir.y = velocityY;
+        }
+
+        //2단점프까지만 가능
+        if (jumpCount < 2)
+        {
+            if (Input.GetButtonDown("Jump"))
+            {
+                velocityY = jumpPower;
+                jumpCount++;
+            }
+        }
+
+        //중력 적용하면서 이동
         controller.Move(dir * speed * Time.deltaTime);
-        //땅 뚤히 못하고, 충돌처리는 되었으나 하늘은 아직 날수있음 => 중력값 조정 필요
     }
+
+
+
+
+
+
+
 }
