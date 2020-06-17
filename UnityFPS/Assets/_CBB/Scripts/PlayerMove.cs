@@ -90,7 +90,11 @@ public class PlayerMove : MonoBehaviour
         //중력 적용하면서 이동
         controller.Move(dir * speed * Time.deltaTime);
     }
-    
+
+
+
+
+
 
 
 }
