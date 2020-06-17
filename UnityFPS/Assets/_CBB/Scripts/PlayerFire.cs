@@ -54,7 +54,7 @@ public class PlayerFire : MonoBehaviour
             if(Physics.Raycast(ray, out hitInfo))
             {
                 //print("충돌 오브젝트 : " + hitInfo.collider.name);
-                //Debug.DrawRay(ray.origin, hitInfo.transform.position - transform.position, Color.red, 3.0f);
+                Debug.DrawRay(ray.origin, hitInfo.transform.position - transform.position, Color.red, 3.0f);
 
                 //충돌지점에 충돌 이펙트 튀겨주기
                 //총알 파편 이펙트 생성
@@ -65,6 +65,14 @@ public class PlayerFire : MonoBehaviour
                 //파편이 부딫힌 지점이 향하는 방향으로 튀도록 한다
                 bulletImpact.transform.forward = hitInfo.normal;
 
+                if (hitInfo.transform.name.Contains("Enemy"))
+                {
+                    //EnemyFSM enemy = hitInfo.collider.GetComponent<EnemyFSM>();
+                    //EnemyFSM enemy = hitInfo.transform.GetComponent<EnemyFSM>();
+                    EnemyFSM enemy = hitInfo.collider.gameObject.GetComponent<EnemyFSM>();
+                    enemy.HitDamage(10);
+                }
+                
 
                 //레이어마스크 사용 충돌처리(최적화)
                 //유니티 내부적으로 속도향상을 위해 비트연산 처리가 된다
@@ -81,10 +89,10 @@ public class PlayerFire : MonoBehaviour
 
 
             }
-            //else
-            //{
-            //    Debug.DrawRay(ray.origin, ray.direction * rayDistance, Color.red, 3.0f);
-            //}
+            else
+            {
+                Debug.DrawRay(ray.origin, ray.direction * rayDistance, Color.red, 3.0f);
+            }
 
         }
 

@@ -16,7 +16,7 @@ public class CamFollow : MonoBehaviour
 
     public float followSpeed = 5.0f;
 
-    private bool follow = false;
+    //private bool follow = false;
 
     public Transform target1st;
     public Transform target3rd;
