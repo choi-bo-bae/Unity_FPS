@@ -69,8 +69,12 @@ public class PlayerFire : MonoBehaviour
                 {
                     //EnemyFSM enemy = hitInfo.collider.GetComponent<EnemyFSM>();
                     //EnemyFSM enemy = hitInfo.transform.GetComponent<EnemyFSM>();
+
+
                     EnemyFSM enemy = hitInfo.collider.gameObject.GetComponent<EnemyFSM>();  //방법1 : 변수 선언
                     enemy.HitDamage(10);
+
+
                     //hitInfo.collider.gameObject.GetComponent<EnemyFSM>().HitDamage(10);   //방법2 : 직접
                     //hitInfo.transform.GetComponent<EnemyFSM>().HitDamage(10); //방법3 : 트렌스폼 가져다가
                 }

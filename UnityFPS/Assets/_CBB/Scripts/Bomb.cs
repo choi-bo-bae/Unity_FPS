@@ -19,6 +19,12 @@ public class Bomb : MonoBehaviour
 
 
         //폭발 이펙트 보여주고
+        if(collision.transform.name.Contains("Enemy"))
+        {
+            EnemyFSM enemy = collision.gameObject.GetComponent<EnemyFSM>();  //방법1 : 변수 선언
+            enemy.HitDamage(20);
+        }
+
 
         GameObject fx = Instantiate(fxfactory);
         fx.transform.position = transform.position;

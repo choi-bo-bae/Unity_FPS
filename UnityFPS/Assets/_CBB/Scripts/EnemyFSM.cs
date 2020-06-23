@@ -23,6 +23,7 @@ public class EnemyFSM : MonoBehaviour
     public GameObject spawnPoint;       //스폰 포인트
     GameObject target;           //플레이어
     public int hp = 100;             //체력
+    //Quaternion startRotation;
     #endregion
 
     #region "Idle상태에 필요한 변수들 1개"
@@ -51,6 +52,10 @@ public class EnemyFSM : MonoBehaviour
     #endregion
 
 
+    //애니메이션을 제어하기 위한 애니메이터 컴포넌트 선언
+    Animator anim;
+
+    
 
     // Start is called before the first frame update
     void Start()
@@ -59,6 +64,11 @@ public class EnemyFSM : MonoBehaviour
         state = EnemyState.Idle;
         target = GameObject.Find("Player");
         //spawnPoint = GameObject.Find("SpawnPoint");
+
+        //애니메이터 컴포넌트는 애너미가 아니라 애너미 바디에 있다
+        anim = GetComponentInChildren<Animator>();
+
+
     }
 
 
@@ -113,7 +123,7 @@ public class EnemyFSM : MonoBehaviour
 
     }
 
-    private void Idle()
+    private void Idle()     //아이들
     {
        //1. 플레이어와 일정범위가 되면 이동 상태로 변경
        //플레이어 찾기 GameObject.Find("Player")
@@ -124,17 +134,26 @@ public class EnemyFSM : MonoBehaviour
        {
             print("추격한다!");
             state = EnemyState.Move;
+
+            //애니메이션 변경
+            anim.SetTrigger("Move");
        }
        else
        {
             print("대기한다!");
             state = EnemyState.Idle;
-       }
-       //상태변경
-       //상태전환 출력
+
+            
+            transform.rotation = Quaternion.identity;
+            //Quaternion.identity => 회전값 초기화
+
+            anim.SetTrigger("Idle");
+        }
+        //상태변경
+        //상태전환 출력
     }
 
-    private void Move()
+    private void Move()     //추격
     {
         //1. 플레이어와 일정범위가 되면 공격 상태로 변경
         if (Vector3.Distance(target.transform.position, transform.position) < searchRange 
@@ -155,17 +174,26 @@ public class EnemyFSM : MonoBehaviour
             //transform.Translate(Vector3.forward * speed * Time.deltaTime);
             //cc.Move(dir * speed * Time.deltaTime); ->플레이어가 점프 할 경우, 하늘로 따라옴
             cc.SimpleMove(dir * speed); //중력값  대신 simpleMove를 사용
-            //simpleMove -> 최소한의 물리가 적용, 중력 문제 해소. 내부적으로 시간처리를 하기 때문에 Time.deltaTime을 사용하지 않는다.
+                                        //simpleMove -> 최소한의 물리가 적용, 중력 문제 해소. 내부적으로 시간처리를 하기 때문에 Time.deltaTime을 사용하지 않는다.
+
+            anim.SetTrigger("Move");
         }
+
+
         if (Vector3.Distance(target.transform.position, transform.position) < attackRange)
         {
             print("공격한다!");
             state = EnemyState.Attack;
+
+            anim.SetTrigger("Attack");
         }
         if (Vector3.Distance(spawnPoint.transform.position, transform.position) > searchRange)
         {
             print("돌아가자!");
             state = EnemyState.Return;
+
+            //애니메이션 변경
+            anim.SetTrigger("Return");
         }
         //플레이어를 추격하더라도 처음위치에서 너무 벗어나지 않도록 한다.
         //플레이어처럼 캐릭터 컨트롤러 이용하기
@@ -185,6 +213,9 @@ public class EnemyFSM : MonoBehaviour
         {
             print("재추격한다!");
             state = EnemyState.Move;
+
+            //애니메이션 변경
+            anim.SetTrigger("Move");
         }
         else
         {
@@ -196,14 +227,21 @@ public class EnemyFSM : MonoBehaviour
                 print("공격한다!");
                 //플레이어의 컴포넌트를 가져와서 데미지 주기
                 //player.GetComponent<PlayerMove>().hitDamage(10);
+
+                anim.SetTrigger("Attack");
+                
                 //타이머 초기화
                 curTime = 0.0f;
+
             }
         }
         if (Vector3.Distance(spawnPoint.transform.position, transform.position) > searchRange)
         {
             print("돌아가자!");
             state = EnemyState.Return;
+
+            //애니메이션 변경
+            anim.SetTrigger("Return");
         }
         //3. 공격 범위 마음대로
         //상태변경
@@ -219,12 +257,17 @@ public class EnemyFSM : MonoBehaviour
             && Vector3.Distance(spawnPoint.transform.position, transform.position) < moveRange)
         {
             state = EnemyState.Move;
+
+            anim.SetTrigger("Move");
         }
         else if(Vector3.Distance(spawnPoint.transform.position, transform.position) < 0.1f)
         {
             print("스폰 포인트에 도착!");
             transform.position = spawnPoint.transform.position;
             state = EnemyState.Idle;
+
+            //애니메이션 변경
+            anim.SetTrigger("Idle");
         }
         else
         {
@@ -236,6 +279,8 @@ public class EnemyFSM : MonoBehaviour
             //transform.Translate(Vector3.forward * speed * Time.deltaTime);
             transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(dir), 5.0f * Time.deltaTime);
             cc.SimpleMove(dir * speed);
+
+            anim.SetTrigger("Return");
         }
 
         //처음위치에서 일정 범위
@@ -255,19 +300,29 @@ public class EnemyFSM : MonoBehaviour
         {
             print("공격한다!");
             state = EnemyState.Attack;
+
+            anim.SetTrigger("Attack");
         }
         if (Vector3.Distance(target.transform.position, transform.position) < searchRange)
         {
             print("추격한다!");
             state = EnemyState.Move;
+
+            //애니메이션 변경
+            anim.SetTrigger("Move");
         }
         if (Vector3.Distance(spawnPoint.transform.position, transform.position) > searchRange)
         {
             print("돌아가자!");
             state = EnemyState.Return;
+
+            //애니메이션 변경
+            anim.SetTrigger("Return");
         }
        
-         print("공격받았다!");
+        print("공격받았다!");
+        anim.SetTrigger("Damaged");
+
        
 
         //2 다시 이전 상태로 변경
@@ -286,7 +341,8 @@ public class EnemyFSM : MonoBehaviour
 
         print("죽었다!");
         state = EnemyState.Die;
-       
+
+        anim.SetTrigger("Die");
 
         //혹시나 돌고 있는 코루틴 꺼주기
         StopAllCoroutines();
