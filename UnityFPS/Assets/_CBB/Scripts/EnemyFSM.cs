@@ -114,11 +114,13 @@ public class EnemyFSM : MonoBehaviour
             hp -= value;
             print("HP : " + hp);
             StartCoroutine(Damaged());
+            anim.SetTrigger("Damaged");
         }
         else
         {
             //죽음
             StartCoroutine(Die());
+            anim.SetTrigger("Die");
         }
 
     }
@@ -321,9 +323,7 @@ public class EnemyFSM : MonoBehaviour
         }
        
         print("공격받았다!");
-        anim.SetTrigger("Damaged");
-
-       
+     
 
         //2 다시 이전 상태로 변경
         //상태 변경

@@ -54,7 +54,7 @@ public class PlayerFire : MonoBehaviour
             if(Physics.Raycast(ray, out hitInfo))
             {
                 //print("충돌 오브젝트 : " + hitInfo.collider.name);
-                Debug.DrawRay(ray.origin, hitInfo.transform.position - transform.position, Color.red, 3.0f);
+                Debug.DrawRay(ray.origin, hitInfo.transform.position - transform.position, Color.red, 10.0f);
 
                 //충돌지점에 충돌 이펙트 튀겨주기
                 //총알 파편 이펙트 생성
@@ -72,7 +72,7 @@ public class PlayerFire : MonoBehaviour
 
 
                     EnemyFSM enemy = hitInfo.collider.gameObject.GetComponent<EnemyFSM>();  //방법1 : 변수 선언
-                    enemy.HitDamage(10);
+                    enemy.HitDamage(10);    //데미지 부여
 
 
                     //hitInfo.collider.gameObject.GetComponent<EnemyFSM>().HitDamage(10);   //방법2 : 직접
